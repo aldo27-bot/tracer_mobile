@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse("http://localhost:8000/register");
+    final url = Uri.parse("http://localhost:8000/api/register");
 
     try {
       final response = await http.post(
