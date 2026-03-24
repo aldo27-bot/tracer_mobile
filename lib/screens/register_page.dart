@@ -10,7 +10,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
   final nimController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -19,13 +18,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
 
   Future<void> register() async {
-
-    // ✅ VALIDASI INPUT
+    //  VALIDASI INPUT
     if (nimController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         tanggalController.text.isEmpty) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Semua field wajib diisi"),
@@ -39,10 +36,9 @@ class _RegisterPageState extends State<RegisterPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse("http://localhost:8000/api/register");
+    final url = Uri.parse("http://localhost:8000/register");
 
     try {
-
       final response = await http.post(
         url,
         headers: {
@@ -50,11 +46,11 @@ class _RegisterPageState extends State<RegisterPage> {
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-  "nim": nimController.text.trim(),
-  "tanggal_lahir": tanggalController.text.trim(),
-  "email": emailController.text.trim(),
-  "password": passwordController.text.trim(),
-}),
+          "nim": nimController.text.trim(),
+          "tanggal_lahir": tanggalController.text.trim(),
+          "email": emailController.text.trim(),
+          "password": passwordController.text.trim(),
+        }),
       );
 
       print("RESPONSE: ${response.body}"); // DEBUG
@@ -62,7 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message'] ?? "Registrasi berhasil"),
@@ -75,27 +70,21 @@ class _RegisterPageState extends State<RegisterPage> {
         emailController.clear();
         passwordController.clear();
         tanggalController.clear();
-
       } else {
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message'] ?? "Terjadi kesalahan"),
             backgroundColor: Colors.red,
           ),
         );
-
       }
-
     } catch (e) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Gagal koneksi: $e"),
           backgroundColor: Colors.red,
         ),
       );
-
     }
 
     setState(() {
@@ -131,7 +120,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: Stack(
         children: [
-
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -173,7 +161,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
                       const Icon(Icons.app_registration, size: 80),
 
                       const SizedBox(height: 10),
@@ -249,7 +236,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 3, 97, 6),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              3,
+                              97,
+                              6,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -258,7 +250,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           onPressed: isLoading ? null : register,
 
                           child: isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
                               : const Text(
                                   "Register",
                                   style: TextStyle(
@@ -268,14 +262,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
               ),
             ),
           ),
-
         ],
       ),
     );
