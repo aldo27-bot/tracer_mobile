@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse("http://127.0.0.1:8000/api/login");
+    final url = Uri.parse("http://172.16.106.79:8000/api/login");
 
     final response = await http.post(
       url,
