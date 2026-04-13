@@ -1,73 +1,115 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:projectsemester4/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 import 'register_page.dart';
+import 'dart:async'; // untuk TimeoutException
+import 'dart:io'; // untuk SocketException
+import '../main.dart'; // untuk MainPage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
-    
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isLoading = false;
 
   Future<void> login() async {
+  // VALIDASI DULU
+  if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Email dan password tidak boleh kosong"),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
 
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    final url = Uri.parse("http://172.16.106.79:8000/api/login");
-
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "email": emailController.text,
-        "password": passwordController.text,
-      }),
+  try {
+    final response = await ApiService.login(
+      emailController.text,
+      passwordController.text,
     );
 
-    final data = jsonDecode(response.body);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Login berhasil"),
+        backgroundColor: Colors.green,
+      ),
+    );
 
+    // TODO: pindah halaman (kalau ada)
+    // Navigator.pushReplacement(...);
+
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.toString()),
+        backgroundColor: Colors.red,
+      ),
+    );
+  } finally {
     setState(() {
       isLoading = false;
     });
+  }
+
+
+  try {
+    final data = await ApiService.login(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
 
     if (data['status'] == true) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("token", data['token'] ?? "");
+
+      prefs.setString('name', data['user']['name']);
+      prefs.setInt('user_id', data['user']['id']);
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomePage()),
+        MaterialPageRoute(builder: (_) => MainPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(data['message'])),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: $e")),
+    );
   }
+
+  setState(() {
+    isLoading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Colors.white,
-              Colors.green.shade100,
-              Colors.green.shade300,
-              Colors.green.shade600,
+              Colors.blue.shade100,
+              Colors.blue.shade300,
+              Colors.blue.shade600,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -90,12 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
-                    Icon(
-                      Icons.school,
-                      size: 80,
-                      color: Colors.black,
-                    ),
+                    Icon(Icons.school, size: 80, color: Colors.black),
 
                     SizedBox(height: 10),
 
@@ -140,8 +177,8 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 45,
                       child: ElevatedButton(
-
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 51, 106, 224),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -151,10 +188,12 @@ class _LoginPageState extends State<LoginPage> {
 
                         child: isLoading
                             ? CircularProgressIndicator(color: Colors.white)
-                            : Text(
-                                "Login",
-                                style: TextStyle(fontSize: 16),
-                              ),
+                            : Text("Login", style:
+                             TextStyle
+                             (fontSize: 16,
+                              color: Colors.white,
+                             )
+                            ),
                       ),
                     ),
 
@@ -168,8 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       child: Text("Belum punya akun? Register"),
-                    )
-
+                    ),
                   ],
                 ),
               ),

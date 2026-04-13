@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:projectsemester4/services/api_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -13,78 +15,57 @@ class _RegisterPageState extends State<RegisterPage> {
   final nimController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final tanggalController = TextEditingController();
 
   bool isLoading = false;
 
   Future<void> register() async {
-    //  VALIDASI INPUT
     if (nimController.text.isEmpty ||
         emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        tanggalController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Semua field wajib diisi"),
-          backgroundColor: Colors.orange,
-        ),
-      );
+        passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Semua field wajib diisi")));
       return;
     }
 
     setState(() {
       isLoading = true;
     });
-
-    final url = Uri.parse("http://172.16.106.79:8000/api/register");
-
+    
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "nim": nimController.text.trim(),
-          "tanggal_lahir": tanggalController.text.trim(),
-          "email": emailController.text.trim(),
-          "password": passwordController.text.trim(),
-        }),
+      final data = await ApiService.register(
+        nimController.text.trim(),
+        emailController.text.trim(),
+        passwordController.text.trim(),
       );
 
-      print("RESPONSE: ${response.body}"); // DEBUG
+      if (data['status'] == true) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? "Registrasi berhasil"),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // KOSONGKAN FORM
         nimController.clear();
         emailController.clear();
         passwordController.clear();
-        tanggalController.clear();
+
+        Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? "Terjadi kesalahan"),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
       }
-    } catch (e) {
+    } on TimeoutException {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Gagal koneksi: $e"),
-          backgroundColor: Colors.red,
-        ),
+        const SnackBar(content: Text("Server terlalu lama merespon")),
       );
+    } on SocketException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tidak bisa terhubung ke server")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     }
 
     setState(() {
@@ -92,26 +73,11 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  // DATE PICKER
-  Future<void> selectDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1970),
-      lastDate: DateTime.now(),
-    );
-
-    if (picked != null) {
-      tanggalController.text = picked.toString().split(" ")[0];
-    }
-  }
-
   @override
   void dispose() {
     nimController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    tanggalController.dispose();
     super.dispose();
   }
 
@@ -120,14 +86,15 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: Stack(
         children: [
+          // BACKGROUND
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   Colors.white,
-                  Colors.green.shade100,
-                  Colors.green.shade300,
-                  Colors.green.shade600,
+                  Colors.blue.shade100,
+                  Colors.blue.shade300,
+                  Colors.blue.shade600,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -135,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
 
+          // BUTTON BACK
           Positioned(
             top: 40,
             left: 10,
@@ -146,6 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
 
+          // FORM
           Center(
             child: SingleChildScrollView(
               child: Card(
@@ -154,17 +123,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 25),
-
                 child: Padding(
                   padding: const EdgeInsets.all(25),
-
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.app_registration, size: 80),
-
                       const SizedBox(height: 10),
-
                       const Text(
                         "Register Alumni",
                         style: TextStyle(
@@ -172,9 +137,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       const SizedBox(height: 25),
 
+                      // NIM
                       TextField(
                         controller: nimController,
                         decoration: InputDecoration(
@@ -188,21 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 15),
 
-                      TextField(
-                        controller: tanggalController,
-                        readOnly: true,
-                        onTap: selectDate,
-                        decoration: InputDecoration(
-                          labelText: "Tanggal Lahir",
-                          prefixIcon: const Icon(Icons.calendar_today),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 15),
-
+                      // EMAIL
                       TextField(
                         controller: emailController,
                         decoration: InputDecoration(
@@ -216,6 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 15),
 
+                      // PASSWORD
                       TextField(
                         controller: passwordController,
                         obscureText: true,
@@ -230,25 +182,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 20),
 
+                      // BUTTON
                       SizedBox(
                         width: double.infinity,
                         height: 45,
-
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              3,
-                              97,
-                              6,
-                            ),
+                            backgroundColor: const Color.fromARGB(255, 51, 106, 224),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-
                           onPressed: isLoading ? null : register,
-
                           child: isLoading
                               ? const CircularProgressIndicator(
                                   color: Colors.white,
