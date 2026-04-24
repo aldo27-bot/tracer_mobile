@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static String baseUrl = "http://172.16.106.213:8000/api";
+  // static String baseUrl = "http://172.16.106.213:8000/api";
+  static String baseUrl = "http://172.16.106.184:8000/api";
 
   // CEK ALUMNI
   static Future cekAlumni(String nim) async {
@@ -27,58 +28,67 @@ class ApiService {
 
   // REGISTER
   static Future register(String nim, String email, String password) async {
-    try {
-      final response = await http
-          .post(
-            Uri.parse("$baseUrl/register"),
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json",
-            },
-            body: jsonEncode({
-              "nim": nim,
-              "email": email,
-              "password": password
-            }),
-          )
-          .timeout(Duration(seconds: 10));
+  try {
+    final response = await http
+        .post(
+          Uri.parse("$baseUrl/register"),
+          headers: {
+            "Accept": "application/json",
+          },
+          body: {
+            "nim": nim,
+            "email": email,
+            "password": password,
+          },
+        )
+        .timeout(Duration(seconds: 10));
 
-      print("REGISTER STATUS: ${response.statusCode}");
-      print("REGISTER BODY: ${response.body}");
+    print("REGISTER STATUS: ${response.statusCode}");
+    print("REGISTER BODY: ${response.body}");
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception("Register gagal");
-      }
-    } catch (e) {
-      print("ERROR REGISTER: $e");
-      throw Exception("Koneksi gagal");
-    }
+    final data = jsonDecode(response.body);
+
+    return data;
+  } catch (e) {
+    print("ERROR REGISTER: $e");
+    throw Exception("Koneksi gagal");
   }
+}
 
   // LOGIN
   static Future login(String email, String password) async {
-    try {
-      var url = Uri.parse("$baseUrl/login");
+  try {
+    var url = Uri.parse("$baseUrl/login");
 
-      var response = await http
-          .post(url, body: {"email": email, "password": password})
-          .timeout(Duration(seconds: 10));
+    var response = await http
+        .post(
+          url,
+          headers: {"Accept": "application/json"},
+          body: {
+            "email": email,
+            "password": password,
+          },
+        )
+        .timeout(Duration(seconds: 10));
 
-      print("LOGIN STATUS: ${response.statusCode}");
-      print("LOGIN BODY: ${response.body}");
+    print("LOGIN STATUS: ${response.statusCode}");
+    print("LOGIN BODY: ${response.body}");
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        throw Exception("Login gagal");
-      }
-    } catch (e) {
-      print("ERROR LOGIN: $e");
-      throw Exception("Koneksi gagal");
-    }
+    final data = jsonDecode(response.body);
+
+    return data;
+  } catch (e) {
+    print("ERROR LOGIN: $e");
+    throw Exception("Koneksi gagal");
   }
+}
+
+
+  //helper untuk ambil data alumni dari response cek-alumni
+  static Map<String, dynamic>? getAlumni(Map<String, dynamic> data) {
+  return data['alumni'];
+}
+
 
   // GET QUESTIONS
   static Future<Map<String, dynamic>> getQuestions(int userId) async {

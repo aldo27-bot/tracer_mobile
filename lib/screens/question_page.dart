@@ -108,28 +108,43 @@ class _QuestionPageState extends State<QuestionPage> {
     }
 
     if (type == "checkbox") {
-      List opsi = q['options'] ?? [];
-      List selected = List<String>.from(answers[id] ?? []);
+  List opsi = q['options'] ?? [];
 
-      return Column(
-        children: opsi.map<Widget>((o) {
-          return CheckboxListTile(
-            value: selected.contains(o),
-            onChanged: (val) {
-              setState(() {
-                if (val == true) {
-                  selected.add(o);
-                } else {
-                  selected.remove(o);
-                }
-                answers[id] = selected;
-              });
-            },
-            title: Text(o),
-          );
-        }).toList(),
-      );
+  List selected = [];
+
+  var rawAnswer = answers[id];
+
+  if (rawAnswer != null) {
+    if (rawAnswer is String) {
+      try {
+        selected = List<String>.from(jsonDecode(rawAnswer));
+      } catch (e) {
+        selected = [];
+      }
+    } else if (rawAnswer is List) {
+      selected = rawAnswer;
     }
+  }
+
+  return Column(
+    children: opsi.map<Widget>((o) {
+      return CheckboxListTile(
+        value: selected.contains(o),
+        onChanged: (val) {
+          setState(() {
+            if (val == true) {
+              selected.add(o);
+            } else {
+              selected.remove(o);
+            }
+            answers[id] = selected;
+          });
+        },
+        title: Text(o),
+      );
+    }).toList(),
+  );
+}
 
     return SizedBox();
   }
@@ -184,17 +199,25 @@ class _QuestionPageState extends State<QuestionPage> {
 
   // ================= UI =================
   @override
-  Widget build(BuildContext context) {
-    double progress = questions.isEmpty ? 0 : answers.length / questions.length;
+Widget build(BuildContext context) {
+  double progress = questions.isEmpty ? 0 : answers.length / questions.length;
 
-    return Scaffold(
-      appBar: AppBar(title: Text("Form Tracer Study"), centerTitle: true),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
+  final bottomPadding = MediaQuery.of(context).padding.bottom + 80;
+
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Form Tracer Study"),
+      centerTitle: true,
+    ),
+
+    body: isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SafeArea(
+            child: Column(
               children: [
+                // ================= PROGRESS =================
                 Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -205,8 +228,10 @@ class _QuestionPageState extends State<QuestionPage> {
                   ),
                 ),
 
+                // ================= LIST =================
                 Expanded(
                   child: ListView.builder(
+                    padding: EdgeInsets.only(bottom: bottomPadding),
                     itemCount: questions.length,
                     itemBuilder: (context, i) {
                       var q = questions[i];
@@ -234,20 +259,29 @@ class _QuestionPageState extends State<QuestionPage> {
                     },
                   ),
                 ),
-
-                // BUTTON SUBMIT
-                Padding(
-                  padding: EdgeInsets.all(12),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: submit,
-                      child: Text("Kirim Jawaban"),
-                    ),
-                  ),
-                ),
               ],
             ),
-    );
-  }
+          ),
+
+    // ================= BUTTON =================
+    bottomNavigationBar: SafeArea(
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(color: Colors.black12),
+          ),
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: submit,
+            child: Text("Kirim Jawaban"),
+          ),
+        ),
+      ),
+    ),
+  );
+}
 }
