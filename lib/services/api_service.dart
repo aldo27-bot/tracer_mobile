@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // static String baseUrl = "http://172.16.106.213:8000/api";
-  static String baseUrl = "http://172.16.106.184:8000/api";
+  static String baseUrl = "http://172.16.106.191:8000/api";
 
   // CEK ALUMNI
   static Future cekAlumni(String nim) async {
