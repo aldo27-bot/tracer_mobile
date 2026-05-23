@@ -7,7 +7,7 @@ import '../models/lowongan_model.dart';
 
 class ApiService {
   // static String baseUrl = "http://172.16.103.150:8000/api";
-  static String baseUrl = "http://172.16.106.57:8000/api";
+  static String baseUrl = "http://172.16.103.173:8000/api";
 
 
   // ==============================
@@ -304,6 +304,8 @@ class ApiService {
   static Future<Map<String, dynamic>> updateProfile(
     String nim,
     String nama,
+    String email,
+    String no_hp,
     String prodi,
     int angkatan,
     int tahunLulus,
@@ -331,6 +333,8 @@ class ApiService {
 
     request.fields['nim'] = nim;
     request.fields['nama'] = nama;
+    request.fields['email'] = email;
+    request.fields['no_hp'] = no_hp;
     request.fields['prodi'] = prodi;
     request.fields['angkatan'] = angkatan.toString();
     request.fields['tahun_lulus'] = tahunLulus.toString();

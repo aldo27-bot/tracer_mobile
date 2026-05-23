@@ -11,7 +11,7 @@ import 'screens/profile_page.dart';
 import 'services/api_service.dart';
 import 'services/notif_service.dart';
 import 'models/alumni_models.dart';
-import 'splash_screen.dart';
+// import 'splash_screen.dart';
 import 'package:projectsemester4/lowongan_pekerjaan/jobs_page.dart';
 import 'package:projectsemester4/screens/login_page.dart';
 
@@ -65,14 +65,40 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Widget? startPage;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  Future<void> checkLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool isLogin = prefs.getBool('isLogin') ?? false;
+
+    setState(() {
+      startPage = isLogin ? const MainPage() : const LoginPage();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+
+      home:
+          startPage ??
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }

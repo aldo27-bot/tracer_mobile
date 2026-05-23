@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
+import '../widgets/screen/notification_ui.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -30,7 +31,6 @@ class _NotificationPageState extends State<NotificationPage> {
     try {
       DateTime notifTime = DateTime.parse(createdAt);
       DateTime seenTime = DateTime.parse(lastSeen!);
-
       return notifTime.isAfter(seenTime);
     } catch (e) {
       return false;
@@ -45,7 +45,6 @@ class _NotificationPageState extends State<NotificationPage> {
 
     final data = await ApiService.getNotifications(userId);
 
-    // HAPUS DATA DUPLIKAT BERDASARKAN ID
     final uniqueData = <dynamic>[];
     final ids = <int>{};
 
@@ -65,64 +64,9 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Riwayat Notifikasi")),
-      body: notifications.isEmpty
-          ? const Center(child: Text("Belum ada notifikasi"))
-          : ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final item = notifications[index];
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  child: ListTile(
-                    leading: Stack(
-                      children: [
-                        const Icon(Icons.notifications),
-
-                        // if (isNewNotification(item['created_at']))
-                        //   Positioned(
-                        //     right: 0,
-                        //     child: Container(
-                        //       padding: const EdgeInsets.all(4),
-                        //       decoration: const BoxDecoration(
-                        //         color: Colors.red,
-                        //         shape: BoxShape.circle,
-                        //       ),
-                        //       child: const Text(
-                        //         "BARU",
-                        //         style: TextStyle(
-                        //           fontSize: 8,
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                      ],
-                    ),
-                    title: Text(item['title'] ?? ''),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item['body'] ?? ''),
-                        const SizedBox(height: 4),
-                        Text(
-                          item['created_at'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+    return NotificationUI(
+      notifications: notifications,
+      isNewNotification: isNewNotification,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
+import '../widgets/jobs/add_job_ui.dart';
 
 class AddJobPage extends StatefulWidget {
   const AddJobPage({super.key});
@@ -26,14 +27,11 @@ class _AddJobPageState extends State<AddJobPage> {
 
   bool isLoading = false;
 
-  // =====================================
-  // FOTO LOWONGAN
-  // =====================================
   File? selectedImage;
 
-  // =====================================
-  // PILIH FOTO
-  // =====================================
+  // =========================
+  // PICK IMAGE
+  // =========================
   Future<void> pickImage() async {
     final picker = ImagePicker();
 
@@ -50,7 +48,38 @@ class _AddJobPageState extends State<AddJobPage> {
   }
 
   // =========================
-  // SIMPAN LOWONGAN
+  // PICK DATE
+  // =========================
+  Future<void> pickDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFEC7004),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      String formattedDate =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+      setState(() {
+        batasC.text = formattedDate;
+      });
+    }
+  }
+
+  // =========================
+  // SAVE JOB
   // =========================
   Future<void> saveJob() async {
     if (!_formKey.currentState!.validate()) {
@@ -71,8 +100,6 @@ class _AddJobPageState extends State<AddJobPage> {
       kontak: kontakC.text.trim(),
       linkLamaran: linkC.text.trim(),
       dibuatOleh: 1,
-
-      // FOTO
       foto: selectedImage,
     );
 
@@ -99,105 +126,6 @@ class _AddJobPageState extends State<AddJobPage> {
     }
   }
 
-  // =========================
-  // FORM FIELD
-  // =========================
-  Widget buildField({
-    required String label,
-    required TextEditingController controller,
-    String? hint,
-    int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
-
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        keyboardType: keyboardType,
-
-        validator: validator,
-
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-
-          filled: true,
-          fillColor: Colors.white,
-
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Color(0xFFEC7004),
-              width: 2,
-            ),
-          ),
-
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Colors.red),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // =========================
-  // PILIH TANGGAL
-  // =========================
-  Future<void> pickDate() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-
-      initialDate: DateTime.now(),
-
-      firstDate: DateTime.now(),
-
-      lastDate: DateTime(2100),
-
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFEC7004),
-            ),
-          ),
-
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      String formattedDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-
-      setState(() {
-        batasC.text = formattedDate;
-      });
-    }
-  }
-
-  // =========================
-  // DISPOSE
-  // =========================
   @override
   void dispose() {
     posisiC.dispose();
@@ -212,327 +140,27 @@ class _AddJobPageState extends State<AddJobPage> {
     super.dispose();
   }
 
-  // =========================
-  // BUILD
-  // =========================
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+    return AddJobUI(
+      formKey: _formKey,
 
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: true,
+      posisiC: posisiC,
+      perusahaanC: perusahaanC,
+      lokasiC: lokasiC,
+      gajiC: gajiC,
+      deskripsiC: deskripsiC,
+      batasC: batasC,
+      kontakC: kontakC,
+      linkC: linkC,
 
-        title: const Text(
-          "Tambah Lowongan",
-          style: TextStyle(
-            color: Color(0xFF0F2D3F),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      selectedImage: selectedImage,
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      isLoading: isLoading,
 
-        child: Form(
-          key: _formKey,
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              const Text(
-                "Isi informasi lowongan pekerjaan",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F2D3F),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // =====================================
-              // FOTO LOWONGAN
-              // =====================================
-              GestureDetector(
-                onTap: pickImage,
-
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-
-                  child: selectedImage != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-
-                          child: Image.file(
-                            selectedImage!,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                            Icon(
-                              Icons.image_outlined,
-                              size: 60,
-                              color: Colors.grey,
-                            ),
-
-                            SizedBox(height: 10),
-
-                            Text(
-                              "Pilih Foto Lowongan",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // POSISI
-              buildField(
-                label: "Posisi",
-                controller: posisiC,
-                hint: "Contoh: Flutter Developer",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Posisi wajib diisi";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // PERUSAHAAN
-              buildField(
-                label: "Nama Perusahaan",
-                controller: perusahaanC,
-                hint: "Contoh: PT Maju Jaya",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Nama perusahaan wajib diisi";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // LOKASI
-              buildField(
-                label: "Lokasi",
-                controller: lokasiC,
-                hint: "Contoh: Surabaya",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Lokasi wajib diisi";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // GAJI
-              buildField(
-                label: "Gaji",
-                controller: gajiC,
-                hint: "Contoh: Rp 5.000.000",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Gaji wajib diisi";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // DESKRIPSI
-              buildField(
-                label: "Deskripsi",
-                controller: deskripsiC,
-                maxLines: 5,
-                hint: "Masukkan deskripsi pekerjaan",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Deskripsi wajib diisi";
-                  }
-
-                  if (value.length < 10) {
-                    return "Deskripsi terlalu pendek";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // BATAS LAMARAN
-              Padding(
-                padding: const EdgeInsets.only(bottom: 18),
-
-                child: TextFormField(
-                  controller: batasC,
-                  readOnly: true,
-
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Batas lamaran wajib diisi";
-                    }
-
-                    return null;
-                  },
-
-                  onTap: pickDate,
-
-                  decoration: InputDecoration(
-                    labelText: "Batas Lamaran",
-                    hintText: "Pilih tanggal",
-
-                    suffixIcon: const Icon(
-                      Icons.calendar_month,
-                      color: Color(0xFFEC7004),
-                    ),
-
-                    filled: true,
-                    fillColor: Colors.white,
-
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFEC7004),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // KONTAK
-              buildField(
-                label: "Kontak",
-                controller: kontakC,
-                keyboardType: TextInputType.phone,
-                hint: "Contoh: 08123456789",
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Kontak wajib diisi";
-                  }
-
-                  if (value.length < 10) {
-                    return "Nomor kontak tidak valid";
-                  }
-
-                  return null;
-                },
-              ),
-
-              // LINK LAMARAN
-              buildField(
-                label: "Link Lamaran (Opsional)",
-                controller: linkC,
-                keyboardType: TextInputType.url,
-                hint: "https://linkedin.com/...",
-
-                validator: (value) {
-
-                  if (value == null || value.isEmpty) {
-                    return null;
-                  }
-
-                  if (!value.startsWith("http")) {
-                    return "Link harus diawali http/https";
-                  }
-
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 10),
-
-              // BUTTON
-              SafeArea(
-                top: false,
-
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 58,
-
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0F2D3F),
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-
-                      onPressed: isLoading ? null : saveJob,
-
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 22,
-                              width: 22,
-
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : const Text(
-                              "Simpan Lowongan",
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      pickImage: pickImage,
+      pickDate: pickDate,
+      saveJob: saveJob,
     );
   }
 }

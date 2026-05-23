@@ -62,7 +62,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/tracerlogo.png"
+  image_path: "assets/tracer_logo_new.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -90,8 +90,7 @@ flutter:
     - assets/Signup-amico.png
     - assets/animations/education.riv
     - assets/Reset_password.png
-    - assets/logotracer.png
-    - assets/tracerlogo.png
+    - assets/tracer1.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -125,14 +124,14 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 flutter_native_splash:
-  color: "#FFFFFF"
+  color: "#22313F"
 
-  image: assets/tracerlogo.png
+  image: assets/logofix.png
 
   android: true
   ios: true
 
   android_12:
-    color: "#FFFFFF"
-    image: assets/tracerlogo.png
-    icon_background_color: "#FFFFFF"
+    color: "#22313F"
+    image: assets/logofix.png
+    icon_background_color: "#22313F"
