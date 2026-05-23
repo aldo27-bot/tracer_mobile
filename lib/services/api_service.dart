@@ -6,8 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/lowongan_model.dart';
 
 class ApiService {
-  // static String baseUrl = "http://172.16.103.150:8000/api";
-  static String baseUrl = "http://172.16.103.173:8000/api";
+  static String baseUrl = "https://tracerstudy.pbltifnganjuk.com/api";
 
 
   // ==============================

@@ -12,26 +12,18 @@ import '../widgets/screen/profile_ui.dart';
 
 class ProfilePage extends StatefulWidget {
   final AlumniModel alumni;
-  final Function(AlumniModel updated)?
-      onProfileUpdate;
+  final Function(AlumniModel updated)? onProfileUpdate;
 
-  const ProfilePage({
-    super.key,
-    required this.alumni,
-    this.onProfileUpdate,
-  });
+  const ProfilePage({super.key, required this.alumni, this.onProfileUpdate});
 
   @override
-  State<ProfilePage> createState() =>
-      _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState
-    extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   late AlumniModel alumniData;
 
-  late TextEditingController
-      alamatController;
+  late TextEditingController alamatController;
 
   bool isLoading = false;
 
@@ -43,13 +35,9 @@ class _ProfilePageState
 
     alumniData = widget.alumni;
 
-    alamatView =
-        widget.alumni.alamat ?? "";
+    alamatView = widget.alumni.alamat ?? "";
 
-    alamatController =
-        TextEditingController(
-      text: alamatView,
-    );
+    alamatController = TextEditingController(text: alamatView);
 
     loadProfile();
   }
@@ -65,8 +53,7 @@ class _ProfilePageState
   // =========================
 
   String getImageUrl(String? image) {
-    if (image == null ||
-        image.isEmpty) {
+    if (image == null || image.isEmpty) {
       return "";
     }
 
@@ -78,17 +65,11 @@ class _ProfilePageState
   // =========================
 
   Future<void> updateAlamat() async {
-    final alamatBaru =
-        alamatController.text.trim();
+    final alamatBaru = alamatController.text.trim();
 
     if (alamatBaru.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Alamat tidak boleh kosong",
-          ),
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Alamat tidak boleh kosong")),
       );
 
       return;
@@ -99,11 +80,7 @@ class _ProfilePageState
     });
 
     try {
-      final data =
-          await ApiService.updateAlamat(
-        widget.alumni.nim,
-        alamatBaru,
-      );
+      final data = await ApiService.updateAlamat(widget.alumni.nim, alamatBaru);
 
       if (data['status'] == true) {
         setState(() {
@@ -112,34 +89,18 @@ class _ProfilePageState
 
         Navigator.pop(context);
 
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Alamat berhasil diperbarui",
-            ),
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Alamat berhasil diperbarui")),
         );
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-          SnackBar(
-            content: Text(
-              data['message'] ??
-                  "Gagal update alamat",
-            ),
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? "Gagal update alamat")),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        SnackBar(
-          content: Text(
-            "Error: $e",
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
       if (mounted) {
         setState(() {
@@ -155,80 +116,45 @@ class _ProfilePageState
 
   Future<void> loadProfile() async {
     try {
-      final prefs =
-          await SharedPreferences
-              .getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
-      final userId =
-          prefs.getInt('user_id');
+      final userId = prefs.getInt('user_id');
 
       if (userId == null) return;
 
-      final data =
-          await ApiService.getProfile(
-        userId,
-      );
+      final data = await ApiService.getProfile(userId);
 
       if (data['status'] == true) {
         final user = data['data'];
 
         setState(() {
           alumniData = AlumniModel(
-            nama:
-                user['nama']
-                        ?.toString() ??
-                    '',
+            nama: user['nama']?.toString() ?? '',
 
-            nim:
-                user['nim']
-                        ?.toString() ??
-                    '',
+            nim: user['nim']?.toString() ?? '',
 
-            email:
-                user['email']
-                    ?.toString(),
+            email: user['email']?.toString(),
 
-            no_hp:
-                user['no_hp']
-                    ?.toString(),
+            no_hp: user['no_hp']?.toString(),
 
-            prodi:
-                user['prodi']
-                        ?.toString() ??
-                    '',
+            prodi: user['prodi']?.toString() ?? '',
 
-            angkatan:
-                user['angkatan']
-                        ?.toString() ??
-                    '',
+            angkatan: user['angkatan']?.toString() ?? '',
 
-            tahunLulus:
-                user['tahun_lulus']
-                        ?.toString() ??
-                    '',
+            tahunLulus: user['tahun_lulus']?.toString() ?? '',
 
-            alamat:
-                user['alamat']
-                    ?.toString(),
+            alamat: user['alamat']?.toString(),
 
-            image:
-                user['image']
-                    ?.toString(),
+            image: user['image']?.toString(),
 
-            tempatLahir:
-                user['tempat_lahir']
-                    ?.toString(),
+            tempatLahir: user['tempat_lahir']?.toString(),
 
-            tanggalLahir:
-                user['tanggal_lahir']
-                    ?.toString(),
+            tanggalLahir: user['tanggal_lahir']?.toString(),
           );
         });
       }
     } catch (e) {
-      debugPrint(
-        "ERROR LOAD PROFILE: $e",
-      );
+      debugPrint("ERROR LOAD PROFILE: $e");
     }
   }
 
@@ -237,15 +163,9 @@ class _ProfilePageState
   // =========================
 
   Future<void> editProfile() async {
-    final result =
-        await Navigator.push(
+    final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) =>
-            EditProfilePage(
-          alumni: alumniData,
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => EditProfilePage(alumni: alumniData)),
     );
 
     if (result != null) {
@@ -262,43 +182,29 @@ class _ProfilePageState
 
         prodi: result["prodi"],
 
-        angkatan:
-            result["angkatan"]
-                .toString(),
+        angkatan: result["angkatan"].toString(),
 
-        tahunLulus:
-            result["tahunLulus"]
-                .toString(),
+        tahunLulus: result["tahunLulus"].toString(),
 
         alamat: result["alamat"],
 
         image:
-            (result["image"] !=
-                        null &&
-                    result["image"]
-                        .toString()
-                        .isNotEmpty)
-                ? result["image"]
-                : null,
+            (result["image"] != null && result["image"].toString().isNotEmpty)
+            ? result["image"]
+            : null,
 
-        tempatLahir:
-            alumniData
-                .tempatLahir,
+        tempatLahir: alumniData.tempatLahir,
 
-        tanggalLahir:
-            alumniData
-                .tanggalLahir,
+        tanggalLahir: alumniData.tanggalLahir,
       );
 
       setState(() {
         alumniData = updated;
 
-        alamatView =
-            result["alamat"] ?? "";
+        alamatView = result["alamat"] ?? "";
       });
 
-      widget.onProfileUpdate
-          ?.call(updated);
+      widget.onProfileUpdate?.call(updated);
     }
   }
 
@@ -307,9 +213,36 @@ class _ProfilePageState
   // =========================
 
   Future<void> logout() async {
-    final prefs =
-        await SharedPreferences
-            .getInstance();
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Logout"),
+          content: const Text("Apakah kamu yakin ingin keluar?"),
+
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text("Batal"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text("Logout"),
+            ),
+          ],
+        );
+      },
+    );
+
+    // JIKA BATAL
+    if (confirm != true) return;
+
+    final prefs = await SharedPreferences.getInstance();
 
     await prefs.clear();
 
@@ -317,10 +250,7 @@ class _ProfilePageState
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (_) =>
-            const LoginPage(),
-      ),
+      MaterialPageRoute(builder: (_) => const LoginPage()),
       (route) => false,
     );
   }
@@ -330,13 +260,9 @@ class _ProfilePageState
     return ProfileUI(
       alumniData: alumniData,
       alamatView: alamatView,
-      imageUrl:
-          getImageUrl(
-        alumniData.image,
-      ),
+      imageUrl: getImageUrl(alumniData.image),
 
-      onEditProfile:
-          editProfile,
+      onEditProfile: editProfile,
 
       onLogout: logout,
     );
