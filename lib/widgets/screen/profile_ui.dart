@@ -10,8 +10,7 @@ class ProfileUI extends StatelessWidget {
 
   final String imageUrl;
 
-  final VoidCallback
-      onEditProfile;
+  final VoidCallback onEditProfile;
 
   final VoidCallback onLogout;
 
@@ -28,109 +27,65 @@ class ProfileUI extends StatelessWidget {
   // CARD DATA
   // =========================
 
-  Widget buildDataMenuItem(
-    IconData icon,
-    String title,
-    String value,
-  ) {
+  Widget buildDataMenuItem(IconData icon, String title, String value) {
     return Container(
-      margin:
-          const EdgeInsets.only(
-        bottom: 14,
-      ),
+      margin: const EdgeInsets.only(bottom: 14),
 
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(
-          18,
-        ),
+        borderRadius: BorderRadius.circular(18),
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black
-                .withOpacity(0.03),
+            color: Colors.black.withOpacity(0.03),
 
             blurRadius: 10,
 
-            offset:
-                const Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
 
       child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
           Container(
-            padding:
-                const EdgeInsets.all(
-              10,
+            padding: const EdgeInsets.all(10),
+
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F5F7),
+
+              borderRadius: BorderRadius.circular(12),
             ),
 
-            decoration:
-                BoxDecoration(
-              color:
-                  const Color(
-                0xFFF3F5F7,
-              ),
-
-              borderRadius:
-                  BorderRadius.circular(
-                12,
-              ),
-            ),
-
-            child: Icon(
-              icon,
-              color:
-                  const Color(
-                0xFF0F2D3F,
-              ),
-              size: 22,
-            ),
+            child: Icon(icon, color: const Color(0xFF0F2D3F), size: 22),
           ),
 
-          const SizedBox(
-            width: 14,
-          ),
+          const SizedBox(width: 14),
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment
-                      .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 Text(
                   title,
 
-                  style:
-                      const TextStyle(
-                    color:
-                        Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
 
-                const SizedBox(
-                  height: 4,
-                ),
+                const SizedBox(height: 4),
 
                 Text(
                   value,
 
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -146,54 +101,33 @@ class ProfileUI extends StatelessWidget {
     final a = alumniData;
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFF7F7F7),
 
       body: SafeArea(
-        child:
-            SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
 
               const Text(
                 "Profile",
 
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight:
-                      FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
 
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
 
               // PROFILE CARD
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
 
                 child: Container(
-                  padding:
-                      const EdgeInsets.all(
-                    24,
-                  ),
+                  padding: const EdgeInsets.all(24),
 
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        Colors.white,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      26,
-                    ),
+                    borderRadius: BorderRadius.circular(26),
                   ),
 
                   child: Column(
@@ -202,219 +136,130 @@ class ProfileUI extends StatelessWidget {
                       CircleAvatar(
                         radius: 42,
 
-                        backgroundColor:
-                            const Color(
-                          0xFF0F2D3F,
-                        ),
+                        backgroundColor: const Color(0xFF0F2D3F),
 
                         child: ClipOval(
-                          child:
-                              (a.image !=
-                                          null &&
-                                      a.image!
-                                          .isNotEmpty)
-                                  ? Image.network(
-                                      imageUrl,
+                          child: (a.image != null && a.image!.isNotEmpty)
+                              ? Image.network(
+                                  imageUrl,
 
-                                      width:
-                                          84,
+                                  width: 84,
 
-                                      height:
-                                          84,
+                                  height: 84,
 
-                                      fit: BoxFit
-                                          .cover,
+                                  fit: BoxFit.cover,
 
-                                      errorBuilder:
-                                          (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return const Icon(
-                                          Icons
-                                              .person,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.person,
 
-                                          color:
-                                              Colors.white,
+                                      color: Colors.white,
 
-                                          size:
-                                              45,
-                                        );
-                                      },
-                                    )
-                                  : const Icon(
-                                      Icons
-                                          .person,
+                                      size: 45,
+                                    );
+                                  },
+                                )
+                              : const Icon(
+                                  Icons.person,
 
-                                      color:
-                                          Colors.white,
+                                  color: Colors.white,
 
-                                      size:
-                                          45,
-                                    ),
+                                  size: 45,
+                                ),
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const SizedBox(height: 16),
 
                       Text(
                         a.nama,
 
-                        textAlign:
-                            TextAlign.center,
+                        textAlign: TextAlign.center,
 
-                        style:
-                            const TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
-                          fontWeight:
-                              FontWeight
-                                  .bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 6,
-                      ),
+                      const SizedBox(height: 6),
 
-                      Text(
-                        a.nim,
+                      Text(a.nim, style: const TextStyle(color: Colors.grey)),
 
-                        style:
-                            const TextStyle(
-                          color:
-                              Colors.grey,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
 
                       Text(
                         a.prodi,
 
-                        textAlign:
-                            TextAlign.center,
+                        textAlign: TextAlign.center,
 
-                        style:
-                            const TextStyle(
-                          color:
-                              Colors.grey,
-                        ),
+                        style: const TextStyle(color: Colors.grey),
                       ),
 
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
 
                       // EDIT PROFILE
                       ElevatedButton.icon(
-                        onPressed:
-                            onEditProfile,
+                        onPressed: onEditProfile,
 
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Color(
-                            0xFFFF8A00,
-                          ),
-                        ),
+                        icon: const Icon(Icons.edit, color: Color(0xFFFF8A00)),
 
                         label: const Text(
                           "Edit Profile",
 
-                          style:
-                              TextStyle(
-                            fontWeight:
-                                FontWeight
-                                    .bold,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
 
-                            color:
-                                Colors.orange,
+                            color: Colors.orange,
                           ),
                         ),
 
-                        style:
-                            ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(
-                            0xFF0F2D3F,
-                          ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0F2D3F),
 
-                          shape:
-                              RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(
-                              16,
-                            ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 12,
-                      ),
+                      const SizedBox(height: 12),
 
                       // LUPA PASSWORD
                       SizedBox(
-                        width:
-                            double.infinity,
+                        width: double.infinity,
 
-                        child:
-                            OutlinedButton.icon(
+                        child: OutlinedButton.icon(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
-                                    LupaPasswordPage(
-                                  email:
-                                      a.email ??
-                                          "",
-                                ),
+                                    LupaPasswordPage(email: a.email ?? ""),
                               ),
                             );
                           },
 
                           icon: const Icon(
                             Icons.lock_reset,
-                            color: Color(
-                              0xFF0F2D3F,
-                            ),
+                            color: Color(0xFF0F2D3F),
                           ),
 
                           label: const Text(
                             "Lupa Password",
 
-                            style:
-                                TextStyle(
-                              fontWeight:
-                                  FontWeight
-                                      .bold,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
 
-                              color: Color(
-                                0xFF0F2D3F,
-                              ),
+                              color: Color(0xFF0F2D3F),
                             ),
                           ),
 
-                          style:
-                              OutlinedButton.styleFrom(
-                            side:
-                                const BorderSide(
-                              color: Color(
-                                0xFF0F2D3F,
-                              ),
-                            ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFF0F2D3F)),
 
-                            shape:
-                                RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(
-                                16,
-                              ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                         ),
@@ -424,52 +269,27 @@ class ProfileUI extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
 
               // DATA LIST
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
 
                 child: Column(
                   children: [
-                    buildDataMenuItem(
-                      Icons.person,
-                      "Nama",
-                      a.nama,
-                    ),
+                    buildDataMenuItem(Icons.person, "Nama", a.nama),
 
-                    buildDataMenuItem(
-                      Icons.badge,
-                      "NIM",
-                      a.nim,
-                    ),
+                    buildDataMenuItem(Icons.badge, "NIM", a.nim),
 
-                    buildDataMenuItem(
-                      Icons.email,
-                      "Email",
-                      a.email ?? "-",
-                    ),
+                    buildDataMenuItem(Icons.email, "Email", a.email ?? "-"),
 
                     buildDataMenuItem(
                       Icons.phone,
                       "Nomor HP",
-                      (a.no_hp != null &&
-                              a.no_hp!
-                                  .isNotEmpty)
-                          ? a.no_hp!
-                          : "-",
+                      (a.no_hp != null && a.no_hp!.isNotEmpty) ? a.no_hp! : "-",
                     ),
 
-                    buildDataMenuItem(
-                      Icons.school,
-                      "Prodi",
-                      a.prodi,
-                    ),
+                    buildDataMenuItem(Icons.school, "Prodi", a.prodi),
 
                     buildDataMenuItem(
                       Icons.calendar_month,
@@ -478,8 +298,7 @@ class ProfileUI extends StatelessWidget {
                     ),
 
                     buildDataMenuItem(
-                      Icons
-                          .workspace_premium,
+                      Icons.workspace_premium,
                       "Tahun Lulus",
                       a.tahunLulus,
                     ),
@@ -487,79 +306,100 @@ class ProfileUI extends StatelessWidget {
                     buildDataMenuItem(
                       Icons.place,
                       "Tempat Lahir",
-                      a.tempatLahir ??
-                          "-",
+                      a.tempatLahir ?? "-",
                     ),
 
                     buildDataMenuItem(
                       Icons.date_range,
                       "Tanggal Lahir",
-                      a.tanggalLahir ??
-                          "-",
+                      a.tanggalLahir ?? "-",
                     ),
 
                     buildDataMenuItem(
                       Icons.location_on,
                       "Alamat",
-                      alamatView
-                              .isEmpty
-                          ? "-"
-                          : alamatView,
+                      alamatView.isEmpty ? "-" : alamatView,
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
 
               // LOGOUT
+              // LOGOUT
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
 
-                child: SizedBox(
-                  width:
-                      double.infinity,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(18),
 
-                  child:
-                      ElevatedButton.icon(
-                    onPressed: onLogout,
+                  onTap: onLogout,
 
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 18,
                     ),
 
-                    label: const Text(
-                      "Logout",
+                    decoration: BoxDecoration(
+                      color: Colors.white,
 
-                      style: TextStyle(
-                        fontWeight:
-                            FontWeight
-                                .bold,
+                      borderRadius: BorderRadius.circular(18),
 
-                        color: Colors.red,
-                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
 
-                    style:
-                        ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(
-                        0xFFF3F5F7,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.08),
+
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+
+                          child: const Icon(
+                            Icons.logout_rounded,
+                            color: Colors.red,
+                            size: 22,
+                          ),
+                        ),
+
+                        const SizedBox(width: 14),
+
+                        const Expanded(
+                          child: Text(
+                            "Logout",
+
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
